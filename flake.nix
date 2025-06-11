@@ -7,7 +7,7 @@
   };
 
   outputs = _:
-    let efael-server-module = import ./.;
+    let efael-server-module = import ./nixos/module.nix;
     in {
       nixosModules = rec {
         efael-server = efael-server-module;
