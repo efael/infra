@@ -1,6 +1,10 @@
-{ lib, config, ... }:
-with lib;
-let cfg = config.services.efael-server;
+{
+  lib,
+  config,
+  ...
+}:
+with lib; let
+  cfg = config.services.efael-server;
 in {
   options.services.efael-server.synapse = {
     enable = mkOption {
@@ -13,7 +17,7 @@ in {
       type = types.int;
       default = 8008;
     };
-    extraConfigFiles = mkOption { type = types.listOf types.inferred; };
+    extraConfigFiles = mkOption {type = types.listOf types.inferred;};
   };
 
   config = mkIf (cfg.enable && cfg.synapse.enable) {
@@ -35,7 +39,7 @@ in {
 
       configureRedisLocally = true;
 
-      extraConfigFiles = cfg.synapse.extraConfigFiles;
+      inherit (cfg.synapse) extraConfigFiles;
 
       extras = lib.mkForce [
         "oidc" # OpenID Connect authentication
@@ -65,36 +69,41 @@ in {
 
         admin_contact = "mailto:support@${cfg.domains.main}";
 
-        listeners = [{
-          port = cfg.synapse.ports;
-          bind_addresses = [ "127.0.0.1" "::1" ];
-          type = "http";
-          tls = false;
-          x_forwarded = true;
-          resources = [{
-            names = [
-              "client"
-              "federation"
-              "keys"
-              "media"
-              "openid"
-              "replication"
-              "static"
+        listeners = [
+          {
+            port = cfg.synapse.ports;
+            bind_addresses = ["127.0.0.1" "::1"];
+            type = "http";
+            tls = false;
+            x_forwarded = true;
+            resources = [
+              {
+                names = [
+                  "client"
+                  "federation"
+                  "keys"
+                  "media"
+                  "openid"
+                  "replication"
+                  "static"
+                ];
+              }
             ];
-          }];
-        }];
+          }
+        ];
 
         account_threepid_delegates.msisdn = "";
-        alias_creation_rules = [{
-          action = "allow";
-          alias = "*";
-          room_id = "*";
-          user_id = "*";
-        }];
+        alias_creation_rules = [
+          {
+            action = "allow";
+            alias = "*";
+            room_id = "*";
+            user_id = "*";
+          }
+        ];
         allow_public_rooms_over_federation = true;
         allow_public_rooms_without_auth = false;
-        auto_join_rooms =
-          [ "#community:${cfg.domains.main}" "#general:${cfg.domains.main}" ];
+        auto_join_rooms = ["#community:${cfg.domains.main}" "#general:${cfg.domains.main}"];
         autocreate_auto_join_rooms = true;
         default_room_version = "10";
         disable_msisdn_registration = true;
@@ -128,7 +137,7 @@ in {
 
         max_spider_size = "10M";
         max_upload_size = "50M";
-        media_storage_providers = [ ];
+        media_storage_providers = [];
 
         password_config = {
           enabled = false;
@@ -142,15 +151,17 @@ in {
         redaction_retention_period = "7d";
         forgotten_room_retention_period = "7d";
         registration_requires_token = false;
-        registrations_require_3pid = [ "email" ];
+        registrations_require_3pid = ["email"];
         report_stats = false;
         require_auth_for_profile_requests = false;
-        room_list_publication_rules = [{
-          action = "allow";
-          alias = "*";
-          room_id = "*";
-          user_id = "*";
-        }];
+        room_list_publication_rules = [
+          {
+            action = "allow";
+            alias = "*";
+            room_id = "*";
+            user_id = "*";
+          }
+        ];
 
         user_directory = {
           prefer_local_users = false;

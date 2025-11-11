@@ -1,6 +1,10 @@
-{ lib, config, ... }:
-with lib;
-let cfg = config.services.efael-server;
+{
+  lib,
+  config,
+  ...
+}:
+with lib; let
+  cfg = config.services.efael-server;
 in {
   imports = [
     (import ./auth.nix)
@@ -14,7 +18,7 @@ in {
     enable = mkEnableOption "efael server";
 
     domains = {
-      main = mkOption { type = types.str; };
+      main = mkOption {type = types.str;};
       server = mkOption {
         type = types.str;
         default = "server.${cfg.domains.main}";
@@ -49,11 +53,11 @@ in {
       };
     };
 
-    secrets = { realm = mkOption { type = types.str; }; };
+    secrets = {realm = mkOption {type = types.str;};};
 
     keys = {
-      call = mkOption { type = types.path; };
-      livekit = mkOption { type = types.path; };
+      call = mkOption {type = types.path;};
+      livekit = mkOption {type = types.path;};
     };
   };
 }

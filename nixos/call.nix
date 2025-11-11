@@ -1,6 +1,10 @@
-{ lib, config, ... }:
-with lib;
-let cfg = config.services.efael-server;
+{
+  lib,
+  config,
+  ...
+}:
+with lib; let
+  cfg = config.services.efael-server;
 in {
   options.services.efael-server.call = {
     enable = mkOption {
@@ -49,15 +53,17 @@ in {
 
     networking.firewall = {
       interfaces.eth0 = let
-        range = with config.services.livekit.settings.rtc; [{
-          from = port_range_start;
-          to = port_range_end;
-        }];
+        range = with config.services.livekit.settings.rtc; [
+          {
+            from = port_range_start;
+            to = port_range_end;
+          }
+        ];
       in {
         allowedUDPPortRanges = range;
-        allowedUDPPorts = [ cfg.call.rtcPort ];
+        allowedUDPPorts = [cfg.call.rtcPort];
         allowedTCPPortRanges = range;
-        allowedTCPPorts = [ cfg.call.rtcPort ];
+        allowedTCPPorts = [cfg.call.rtcPort];
       };
     };
   };

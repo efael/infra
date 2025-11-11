@@ -1,8 +1,12 @@
-{ lib, config, ... }:
-with lib;
-let cfg = config.services.efael-server;
+{
+  lib,
+  config,
+  ...
+}:
+with lib; let
+  cfg = config.services.efael-server;
 in {
-  imports = [ (import ./mas.nix) ];
+  imports = [(import ./mas.nix)];
 
   options.services.efael-server.auth = {
     enable = mkOption {
@@ -19,14 +23,14 @@ in {
       type = types.int;
       default = 8081;
     };
-    extraConfigFiles = mkOption { type = types.listOf types.inferred; };
+    extraConfigFiles = mkOption {type = types.listOf types.inferred;};
   };
 
   config = mkIf (cfg.enable && cfg.auth.enable) {
     services.matrix-authentication-service = {
       enable = true;
       createDatabase = true;
-      extraConfigFiles = cfg.auth.extraConfigFiles;
+      inherit (cfg.auth) extraConfigFiles;
 
       settings = {
         http = {
@@ -36,30 +40,33 @@ in {
             {
               name = "web";
               resources = [
-                { name = "discovery"; }
-                { name = "human"; }
-                { name = "oauth"; }
-                { name = "compat"; }
-                { name = "graphql"; }
+                {name = "discovery";}
+                {name = "human";}
+                {name = "oauth";}
+                {name = "compat";}
+                {name = "graphql";}
                 {
                   name = "assets";
-                  path =
-                    "${config.services.matrix-authentication-service.package}/share/matrix-authentication-service/assets";
+                  path = "${config.services.matrix-authentication-service.package}/share/matrix-authentication-service/assets";
                 }
               ];
-              binds = [{
-                host = "0.0.0.0";
-                port = cfg.auth.webPort;
-              }];
+              binds = [
+                {
+                  host = "0.0.0.0";
+                  port = cfg.auth.webPort;
+                }
+              ];
               proxy_protocol = false;
             }
             {
               name = "internal";
-              resources = [{ name = "health"; }];
-              binds = [{
-                host = "0.0.0.0";
-                port = cfg.auth.healthPort;
-              }];
+              resources = [{name = "health";}];
+              binds = [
+                {
+                  host = "0.0.0.0";
+                  port = cfg.auth.healthPort;
+                }
+              ];
               proxy_protocol = false;
             }
           ];

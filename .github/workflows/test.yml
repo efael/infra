@@ -1,0 +1,18 @@
+name: Test CI
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  test-flake:
+    name: "Test flake options"
+    runs-on: self-hosted
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Check up flake configuration
+        run: nix flake check --all-systems --show-trace

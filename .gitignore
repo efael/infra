@@ -1,0 +1,8 @@
+# Nix builds
+result
+
+# Pre commit hooks
+.pre-commit-*
+
+# Direnv
+.direnv

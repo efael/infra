@@ -1,6 +1,10 @@
-{ lib, config, ... }:
-with lib;
-let cfg = config.services.efael-server;
+{
+  lib,
+  config,
+  ...
+}:
+with lib; let
+  cfg = config.services.efael-server;
 in {
   options.services.efael-server.turn = {
     enable = mkOption {
@@ -8,13 +12,12 @@ in {
       example = true;
       description = "Whether to enable TURN server.";
       type = lib.types.bool;
-
     };
   };
 
   config = mkIf (cfg.enable && cfg.turn.enable) {
     services.coturn = rec {
-      realm = cfg.domains.realm;
+      inherit (cfg.domains) realm;
       enable = true;
       no-cli = true;
       no-tcp-relay = true;
@@ -58,19 +61,21 @@ in {
 
     networking.firewall = {
       interfaces.eth0 = let
-        range = with config.services.coturn; [{
-          from = min-port;
-          to = max-port;
-        }];
+        range = with config.services.coturn; [
+          {
+            from = min-port;
+            to = max-port;
+          }
+        ];
       in {
         allowedUDPPortRanges = range;
-        allowedUDPPorts = [ 3478 5349 ];
-        allowedTCPPortRanges = [ ];
-        allowedTCPPorts = [ 3478 5349 ];
+        allowedUDPPorts = [3478 5349];
+        allowedTCPPortRanges = [];
+        allowedTCPPorts = [3478 5349];
       };
     };
 
-    users.users.nginx.extraGroups = [ config.users.groups.turnserver.name ];
+    users.users.nginx.extraGroups = [config.users.groups.turnserver.name];
 
     security.acme.certs.${config.services.coturn.realm} = {
       postRun = "systemctl restart coturn.service";
