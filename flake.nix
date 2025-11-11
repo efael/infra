@@ -26,6 +26,9 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Efael messenger
+    web-client.url = "github:efael/fluffy/efael/app/v2.2.0";
   };
 
   outputs = {
@@ -48,32 +51,7 @@
       ];
       flake = {
         # Put your original flake attributes here.
-        overlays = {
-          # When applied, the unstable nixpkgs set (declared in the flake inputs) will
-          # be accessible through 'pkgs.unstable'
-          default = final: prev: rec {
-            unstable = import inputs.nixpkgs-unstable {
-              inherit (final) system;
-              config.allowUnfree = true;
-            };
-
-            statix =
-              final.unstable.statix.overrideAttrs
-              (_o: rec {
-                src = final.fetchFromGitHub {
-                  owner = "oppiliappan";
-                  repo = "statix";
-                  rev = "43681f0da4bf1cc6ecd487ef0a5c6ad72e3397c7";
-                  hash = "sha256-LXvbkO/H+xscQsyHIo/QbNPw2EKqheuNjphdLfIZUv4=";
-                };
-
-                cargoDeps = final.rustPlatform.importCargoLock {
-                  lockFile = src + "/Cargo.lock";
-                  allowBuiltinFetchGit = true;
-                };
-              });
-          };
-        };
+        overlays.default = import ./overlay.nix;
       };
       systems = [
         # systems for which you want to build the `perSystem` attributes
@@ -88,10 +66,6 @@
       }: {
         # Recommended: move all package definitions here.
         # e.g. (assuming you have a nixpkgs input)
-        # packages.foo = pkgs.callPackage ./foo/package.nix { };
-        # packages.bar = pkgs.callPackage ./bar/package.nix {
-        #   foo = config.packages.foo;
-        # };
         overlayAttrs = {
           inherit (config.checks) pre-commit-check;
         };
@@ -107,6 +81,10 @@
               flake-checker.enable = true;
             };
           };
+        };
+
+        packages = {
+          inherit (inputs.web-client.packages.${pkgs.system}) web;
         };
 
         devShells = {
