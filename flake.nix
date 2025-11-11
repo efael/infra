@@ -1,5 +1,22 @@
 {
-  description = "";
+  # ================================================================
+  #         oooooooooooo  .o88o.                     oooo
+  #         `888'     `8  888 `"                     `888
+  #          888         o888oo   .oooo.    .ooooo.   888
+  #          888oooo8     888    `P  )88b  d88' `88b  888
+  #          888    "     888     .oP"888  888ooo888  888
+  #          888       o  888    d8(  888  888    .o  888
+  #         o888ooooood8 o888o   `Y888""8o `Y8bod8P' o888o
+  # ================================================================
+  description = "Server side infrastructure for Efael's ecosystem.";
+
+  # Extra nix configurations to inject to flake scheme
+  # => use if something doesn't work out of box or when despaired...
+  nixConfig = {
+    experimental-features = ["nix-command" "flakes" "pipe-operators"];
+    extra-substituters = ["https://cache.xinux.uz/"];
+    extra-trusted-public-keys = ["cache.xinux.uz:BXCrtqejFjWzWEB9YuGB7X2MV4ttBur1N8BkwQRdH+0="];
+  };
 
   inputs = {
     # Nixpkgs
