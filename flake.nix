@@ -102,10 +102,7 @@
           pre-commit-check = pre-commit-hooks.lib.${pkgs.system}.run {
             src = ./.;
             hooks = {
-              statix = {
-                enable = true;
-                package = pkgs.statix;
-              };
+              statix.enable = true;
               alejandra.enable = true;
               flake-checker.enable = true;
             };
